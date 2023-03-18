@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 class Feedback extends Component {
   state = {
@@ -59,10 +58,7 @@ class Feedback extends Component {
         <p>Total: {this.countTotalFeedback()}</p>
         <p>
           Positive feedback:
-          {this.countPositiveFeedbackPercentage() === NaN
-            ? 0
-            : this.countPositiveFeedbackPercentage()}
-          %
+          {this.countPositiveFeedbackPercentage()}%
         </p>
       </div>
     );
