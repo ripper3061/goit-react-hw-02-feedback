@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { FeedbackOptions } from './components/FeedbackOptions';
+import { Statistics } from './components/Statistics';
+import { Section } from './components/Section';
 
 class Feedback extends Component {
   state = {
@@ -7,59 +10,45 @@ class Feedback extends Component {
     bad: 0,
   };
 
-  clickOnGood = () => {
-    this.setState(prevState => {
-      return { good: prevState.good + 1 };
-    });
-  };
-
-  clickOnNeutral = () => {
-    this.setState(prevState => {
-      return { neutral: prevState.neutral + 1 };
-    });
-  };
-
-  clickOnBad = () => {
-    this.setState(prevState => {
-      return { bad: prevState.bad + 1 };
-    });
+  onLeaveFeedback = option => {
+    this.setState(prevState => ({
+      [option]: prevState[option] + 1,
+    }));
   };
 
   countTotalFeedback = () => {
-    return this.state.good + this.state.neutral + this.state.bad;
+    const feedbackValues = Object.values(this.state);
+    return feedbackValues.reduce((acc, value) => value + acc, 0);
   };
 
   countPositiveFeedbackPercentage = () => {
     return Math.round(
-      ((this.countTotalFeedback() - this.state.neutral - this.state.bad) *
-        100) /
-        this.countTotalFeedback()
+      this.countTotalFeedback()
+        ? (this.state.good / this.countTotalFeedback()) * 100
+        : 0
     );
   };
 
   render() {
+    const { good, neutral, bad } = this.state;
     return (
       <div>
-        <h2>Please leave feedback</h2>
-        <button type="button" onClick={this.clickOnGood}>
-          Good
-        </button>
-        <button type="button" onClick={this.clickOnNeutral}>
-          Neutral
-        </button>
-        <button type="button" onClick={this.clickOnBad}>
-          Bad
-        </button>
+        <Section title="Please leave feedback">
+          <FeedbackOptions
+            options={Object.keys(this.state)}
+            onLeaveFeedback={this.onLeaveFeedback}
+          ></FeedbackOptions>
+        </Section>
 
-        <h2>Statistic</h2>
-        <p>Good: {this.state.good}</p>
-        <p>Neutral: {this.state.neutral}</p>
-        <p>Bad: {this.state.bad}</p>
-        <p>Total: {this.countTotalFeedback()}</p>
-        <p>
-          Positive feedback:
-          {this.countPositiveFeedbackPercentage()}%
-        </p>
+        <Section title="Statistic">
+          <Statistics
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            total={this.countTotalFeedback()}
+            positivePercentage={this.countPositiveFeedbackPercentage()}
+          ></Statistics>
+        </Section>
       </div>
     );
   }
